@@ -1,23 +1,48 @@
----
-layout: default
----
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
-<div class="home">
+<input id="mqttHost" type="text"/>
+<input id="mqttPort" type="text"/>
+<input id="roomId" type="text"/>
+<input id="connectBtn" type="button" value="Connect">
 
-  <h1 class="page-heading">Posts</h1>
+<script>
+  const button = document.querySelector("#connectBtn");
+  button.addEventListener("click", mqttConnect);
 
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+  function mqttConnect() {
+    var mqttHost = document.querySelector("#mqttHost").value;
+    var mqttPort = document.querySelector("#mqttPort").value;
+    var roomId = document.querySelector("#roomId").value;
+    console.log(`${mqttHost}:${mqttPort} - ${roomId}`);
 
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
-    {% endfor %}
-  </ul>
+    client = new Paho.MQTT.Client(
+      `${mqttHost}`,
+      Number.parseInt(mqttPort),
+      "clientId"
+    );
 
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
 
-</div>
+    client.connect({ onSuccess: onConnect });
+
+    function onConnect() {
+      // Once a connection has been made, make a subscription and send a message.
+      console.log("onConnect");
+      client.subscribe(`host/${mqttHost}`);
+      message = new Paho.MQTT.Message("Hello");
+      message.destinationName = `host/${roomId}`;
+      client.send(message);
+    }
+
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:" + responseObject.errorMessage);
+      }
+    }
+
+    function onMessageArrived(message) {
+      console.log("onMessageArrived:" + message.payloadString);
+    }
+  }
+</script>
