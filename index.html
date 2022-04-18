@@ -17,7 +17,7 @@
     var ssl = document.querySelector("#ssl").value;
     ssl = ssl.length > 0
     if (ssl) {
-      console.log(`wsss:${mqttHost}:${mqttPort} - ${channel}`);
+      console.log(`wss:${mqttHost}:${mqttPort} - ${channel}`);
     } else {
       console.log(`ws:${mqttHost}:${mqttPort} - ${channel}`);
     }
@@ -39,7 +39,7 @@
     function onConnect() {
       // Once a connection has been made, make a subscription and send a message.
       console.log("onConnect");
-      client.subscribe(`${mqttHost}`);
+      client.subscribe(`${channel}`);
       message = new Paho.MQTT.Message("Hello");
       message.destinationName = `${channel}`;
       client.send(message);
