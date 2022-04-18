@@ -25,6 +25,7 @@
     client = new Paho.MQTT.Client(
       `${mqttHost}`,
       Number.parseInt(mqttPort),
+      "/",
       "clientId"
     );
 
