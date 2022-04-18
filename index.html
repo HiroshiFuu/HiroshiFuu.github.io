@@ -10,6 +10,7 @@
   const button = document.querySelector("#connectBtn");
   button.addEventListener("click", mqttConnect);
 
+  var that = this;
   function mqttConnect() {
     var mqttHost = document.querySelector("#mqttHost").value;
     var mqttPort = document.querySelector("#mqttPort").value;
@@ -25,7 +26,7 @@
     client = new Paho.MQTT.Client(
       `${mqttHost}`,
       Number.parseInt(mqttPort),
-      "",
+      `${channel}`,
       "clientId"
     );
     console.log(client);
@@ -56,5 +57,7 @@
     function onMessageArrived(message) {
       console.log("onMessageArrived:" + message.payloadString);
     }
+
+    that.mqttClient = client;
   }
 </script>
