@@ -25,9 +25,10 @@
     client = new Paho.MQTT.Client(
       `${mqttHost}`,
       Number.parseInt(mqttPort),
-      "/",
+      "",
       "clientId"
     );
+    console.log(client);
 
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
